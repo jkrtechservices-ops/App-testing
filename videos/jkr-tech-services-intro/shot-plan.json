@@ -1,0 +1,28 @@
+{
+  "category": "kinetic-type",
+  "duration_s": 5,
+  "fps": 30,
+  "canvas": { "w": 1920, "h": 1080, "aspect": "16:9" },
+  "style": "minimal dark title card, confident pop-in entrance, smooth fade",
+  "palette": ["#0a0a0f", "#ffffff", "#7dd3fc"],
+  "font": "Inter",
+  "beats": [0.3, 3.8],
+  "export": "mp4",
+  "asset_needs": [],
+  "block": null,
+  "customize": {},
+  "content": {
+    "scenes": [
+      {
+        "id": "title",
+        "start": 0,
+        "end": 5,
+        "text": "JKR Tech Services",
+        "emphasis_words": [],
+        "emotion": "confident, clean",
+        "motion": "pop-in (scale + fade) at 0.3s, hold, smooth fade-out from 3.8s to 5s",
+        "beats": [0.3, 3.8]
+      }
+    ]
+  }
+}
