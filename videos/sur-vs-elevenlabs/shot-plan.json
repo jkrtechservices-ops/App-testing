@@ -1,0 +1,28 @@
+{
+  "category": "general-video",
+  "duration_s": 30,
+  "fps": 30,
+  "canvas": { "w": 1080, "h": 1920, "aspect": "9:16" },
+  "style": "dark, clean, spec-sheet comparison — Sur bold/teal/heavy, ElevenLabs muted/grey/light; the color asymmetry IS the argument",
+  "palette": ["#0d0d12", "#f5f6f7", "#14b8a6", "#9a9aa3"],
+  "font": "Montserrat (statements/values) + JetBrains Mono (labels/data/URL)",
+  "export": "mp4",
+  "content": {
+    "scenes": [
+      {
+        "id": "comparison",
+        "start": 0,
+        "end": 25.3,
+        "text": "Sur vs ElevenLabs — 6-row feature comparison, rows stagger in one after another",
+        "motion": "eyebrow + title + column headers + divider draw-on, then 6 rows slide-up-fade one after another, each check badge scale-pops after its row lands, disclaimer fades in under the pricing row, whole block fades/slides out at the end"
+      },
+      {
+        "id": "cta",
+        "start": 24.5,
+        "end": 30,
+        "text": "Try Sur — Free, No Signup / jugaadai.in",
+        "motion": "crossfade in from comparison exit, headline settles, URL pill scale-pops in"
+      }
+    ]
+  }
+}

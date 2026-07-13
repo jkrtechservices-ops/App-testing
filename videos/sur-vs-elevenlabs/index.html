@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="./vendor/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #0d0d12;
+      }
+      body {
+        font-family: "Montserrat", sans-serif;
+      }
+
+      :root {
+        --bg: #0d0d12;
+        --fg: #f5f6f7;
+        --fg-dim: #b1b1ba;
+        --fg-faint: #8c8c94;
+        --teal: #14b8a6;
+        --teal-deep: #062420;
+        --divider: rgba(255, 255, 255, 0.09);
+        --mono: "JetBrains Mono", monospace;
+      }
+
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        background: var(--bg);
+        overflow: hidden;
+      }
+
+      /* ---------- background decor (persistent) ---------- */
+      #bg-decor {
+        position: absolute;
+        inset: 0;
+      }
+      .glow-teal {
+        position: absolute;
+        top: -220px;
+        left: -260px;
+        width: 900px;
+        height: 900px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(20, 184, 166, 0.24) 0%, rgba(20, 184, 166, 0) 68%);
+      }
+      .glow-grey {
+        position: absolute;
+        bottom: -260px;
+        right: -280px;
+        width: 820px;
+        height: 820px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(154, 154, 163, 0.13) 0%, rgba(154, 154, 163, 0) 70%);
+      }
+      .grid-texture {
+        position: absolute;
+        inset: 0;
+        opacity: 0.05;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.6) 1px, transparent 1px);
+        background-size: 54px 54px;
+      }
+      .reg-mark {
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        opacity: 0.35;
+      }
+      .reg-mark::before,
+      .reg-mark::after {
+        content: "";
+        position: absolute;
+        background: var(--fg-dim);
+      }
+      .reg-mark::before {
+        left: 50%;
+        top: 0;
+        width: 1.5px;
+        height: 100%;
+        transform: translateX(-50%);
+      }
+      .reg-mark::after {
+        top: 50%;
+        left: 0;
+        height: 1.5px;
+        width: 100%;
+        transform: translateY(-50%);
+      }
+      .reg-tl { top: 44px; left: 44px; }
+      .reg-tr { top: 44px; right: 44px; }
+      .reg-bl { bottom: 44px; left: 44px; }
+      .reg-br { bottom: 44px; right: 44px; }
+
+      .corner-tag {
+        position: absolute;
+        bottom: 46px;
+        right: 46px;
+        font-family: var(--mono);
+        font-size: 15px;
+        letter-spacing: 0.08em;
+        color: var(--fg-faint);
+        text-transform: uppercase;
+      }
+
+      /* ---------- comparison scene ---------- */
+      #comparison-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 96px 72px 90px;
+      }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--mono);
+        font-size: 20px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--fg-dim);
+      }
+      .eyebrow .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--teal);
+        box-shadow: 0 0 10px 2px rgba(20, 184, 166, 0.6);
+      }
+
+      #title {
+        margin-top: 22px;
+        font-weight: 900;
+        font-size: 66px;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+        color: var(--fg);
+      }
+      #title .t-sur { color: var(--teal); }
+      #title .t-vs {
+        font-family: var(--mono);
+        font-weight: 400;
+        font-size: 32px;
+        color: var(--fg-faint);
+        margin: 0 6px;
+      }
+
+      .col-headers {
+        margin-top: 40px;
+        display: flex;
+        align-items: baseline;
+      }
+      .col-headers > div { flex: 1; }
+      #col-sur {
+        text-align: right;
+        padding-right: 30px;
+        font-weight: 900;
+        font-size: 36px;
+        letter-spacing: -0.01em;
+        color: var(--teal);
+      }
+      #col-eleven {
+        text-align: left;
+        padding-left: 30px;
+        font-weight: 700;
+        font-size: 30px;
+        color: var(--fg-dim);
+      }
+
+      #divider-center {
+        position: relative;
+        margin-top: 26px;
+        height: 1240px;
+        display: flex;
+        justify-content: center;
+      }
+      #divider-center .line {
+        width: 2px;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(20, 184, 166, 0.5), rgba(154, 154, 163, 0.25));
+        transform-origin: top center;
+      }
+
+      .rows-wrap {
+        position: absolute;
+        top: 500px;
+        left: 72px;
+        right: 72px;
+        bottom: 90px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+      }
+
+      .feature-row {
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--divider);
+      }
+      .feature-row:last-child { border-bottom: none; }
+
+      .row-label {
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 16px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--fg-faint);
+        margin-bottom: 14px;
+      }
+
+      .row-values {
+        display: flex;
+        align-items: flex-start;
+      }
+      .row-values > div { flex: 1; }
+
+      .val-sur {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        padding-right: 30px;
+        text-align: right;
+        font-weight: 700;
+        font-size: 27px;
+        line-height: 1.28;
+        color: var(--fg);
+      }
+      .val-eleven {
+        padding-left: 30px;
+        text-align: left;
+        font-weight: 400;
+        font-size: 25px;
+        line-height: 1.28;
+        color: var(--fg-dim);
+      }
+
+      .check-badge {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--teal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 14px 1px rgba(20, 184, 166, 0.45);
+      }
+      .check-badge svg { width: 16px; height: 16px; }
+
+      .disclaimer {
+        margin-top: 14px;
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 15px;
+        letter-spacing: 0.02em;
+        color: var(--fg-faint);
+      }
+      .disclaimer .d-dot { color: var(--teal); margin-right: 6px; }
+
+      /* ---------- CTA scene ---------- */
+      #cta-card {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 96px;
+      }
+      .cta-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 1100px;
+        height: 1100px;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(20, 184, 166, 0.22) 0%, rgba(20, 184, 166, 0) 62%);
+      }
+      #cta-headline {
+        position: relative;
+        font-weight: 900;
+        font-size: 62px;
+        line-height: 1.16;
+        letter-spacing: -0.02em;
+        color: var(--fg);
+      }
+      #cta-headline .h-sur { color: var(--teal); }
+
+      #cta-url {
+        position: relative;
+        margin-top: 52px;
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        padding: 26px 48px;
+        border-radius: 999px;
+        background: var(--teal);
+        box-shadow: 0 0 40px 4px rgba(20, 184, 166, 0.35);
+      }
+      #cta-url span {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 32px;
+        color: var(--teal-deep);
+        letter-spacing: 0.01em;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="30"
+      data-width="1080"
+      data-height="1920"
+      data-fps="30"
+    >
+      <div id="bg-decor">
+        <div class="glow-teal" id="glow-teal"></div>
+        <div class="glow-grey" id="glow-grey"></div>
+        <div class="grid-texture"></div>
+        <div class="reg-mark reg-tl"></div>
+        <div class="reg-mark reg-tr"></div>
+        <div class="reg-mark reg-bl"></div>
+        <div class="reg-mark reg-br"></div>
+        <div class="corner-tag">jugaadai.in</div>
+      </div>
+
+      <div id="comparison-content">
+        <div class="eyebrow" id="eyebrow"><span class="dot"></span>AI Voice Platforms Compared</div>
+
+        <div id="title">
+          <span class="t-sur">Sur</span><span class="t-vs">vs</span>ElevenLabs
+        </div>
+
+        <div class="col-headers">
+          <div id="col-sur">SUR</div>
+          <div id="col-eleven">ELEVENLABS</div>
+        </div>
+
+        <div id="divider-center"><div class="line"></div></div>
+
+        <div class="rows-wrap">
+          <div class="feature-row" id="row1">
+            <div class="row-label">Voice Cloning</div>
+            <div class="row-values">
+              <div class="val-sur">Free<span class="check-badge" id="check1"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven">Paid plans only</div>
+            </div>
+          </div>
+
+          <div class="feature-row" id="row2">
+            <div class="row-label">Pricing Model</div>
+            <div class="row-values">
+              <div class="val-sur">One-time from &#8377;49<span class="check-badge" id="check2"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven">Monthly subscription</div>
+            </div>
+            <div class="disclaimer" id="disclaimer"><span class="d-dot">&#9679;</span>Current pricing — check jugaadai.in</div>
+          </div>
+
+          <div class="feature-row" id="row3">
+            <div class="row-label">Start Without Signup</div>
+            <div class="row-values">
+              <div class="val-sur">Yes (just watch an ad)<span class="check-badge" id="check3"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven">Account required</div>
+            </div>
+          </div>
+
+          <div class="feature-row" id="row4">
+            <div class="row-label">Indian Languages</div>
+            <div class="row-values">
+              <div class="val-sur">10+ (Hindi, Tamil, Telugu, Bengali &amp; more)<span class="check-badge" id="check4"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven">Limited</div>
+            </div>
+          </div>
+
+          <div class="feature-row" id="row5">
+            <div class="row-label">Preview Before You Spend</div>
+            <div class="row-values">
+              <div class="val-sur">Free preview<span class="check-badge" id="check5"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven">Not free</div>
+            </div>
+          </div>
+
+          <div class="feature-row" id="row6">
+            <div class="row-label">Voice Library</div>
+            <div class="row-values">
+              <div class="val-sur">2M+ community voices + clone your own<span class="check-badge" id="check6"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven">Curated roster</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="cta-card">
+        <div class="cta-glow"></div>
+        <div id="cta-headline">Try <span class="h-sur">Sur</span> — Free, No Signup</div>
+        <div id="cta-url"><span>jugaadai.in</span></div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
+
+      // seek-safe reveal for everything that starts hidden
+      gsap.set(
+        [
+          "#eyebrow", "#title", "#col-sur", "#col-eleven", "#divider-center .line",
+          "#row1", "#row2", "#row3", "#row4", "#row5", "#row6",
+          "#check1", "#check2", "#check3", "#check4", "#check5", "#check6",
+          "#disclaimer",
+        ],
+        { autoAlpha: 0 }
+      );
+      gsap.set("#divider-center .line", { scaleY: 0 });
+      gsap.set(["#check1", "#check2", "#check3", "#check4", "#check5", "#check6"], { scale: 0 });
+      gsap.set("#cta-card", { autoAlpha: 0 });
+      gsap.set("#cta-headline", { autoAlpha: 0 });
+      gsap.set("#cta-url", { autoAlpha: 0, scale: 0 });
+
+      // ambient background — slow breathing glows, deterministic under seek (finite repeat covers full 30s duration)
+      const TOTAL_DURATION = 30;
+      gsap.to("#glow-teal", {
+        scale: 1.08, x: 20, duration: 4.5, ease: "sine.inOut", yoyo: true,
+        repeat: Math.floor(TOTAL_DURATION / 4.5) - 1,
+      });
+      gsap.to("#glow-grey", {
+        scale: 1.1, y: -16, duration: 5.2, ease: "sine.inOut", yoyo: true,
+        repeat: Math.floor(TOTAL_DURATION / 5.2) - 1,
+      });
+
+      // --- header block ---
+      tl.fromTo("#eyebrow", { autoAlpha: 0, x: -18 }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.15);
+      tl.fromTo("#title", { autoAlpha: 0, y: 26, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6 }, 0.3);
+      tl.fromTo("#col-sur", { autoAlpha: 0, x: -30 }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.62);
+      tl.fromTo("#col-eleven", { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.72);
+      tl.fromTo("#divider-center .line", { autoAlpha: 0, scaleY: 0 }, { autoAlpha: 1, scaleY: 1, duration: 0.7, ease: "power2.inOut" }, 0.85);
+
+      // --- feature rows: slide up + fade, one after another, checkmark scale-pops after each lands ---
+      const rows = [
+        { row: "#row1", check: "#check1", start: 1.15 },
+        { row: "#row2", check: "#check2", start: 2.55 },
+        { row: "#row3", check: "#check3", start: 3.95 },
+        { row: "#row4", check: "#check4", start: 5.35 },
+        { row: "#row5", check: "#check5", start: 6.75 },
+        { row: "#row6", check: "#check6", start: 8.15 },
+      ];
+      rows.forEach(({ row, check, start }) => {
+        tl.fromTo(row, { autoAlpha: 0, y: 38 }, { autoAlpha: 1, y: 0, duration: 0.55 }, start);
+        tl.fromTo(
+          check,
+          { autoAlpha: 0, scale: 0 },
+          { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" },
+          start + 0.42
+        );
+      });
+
+      // disclaimer, near the pricing row (row2 lands ~3.1s)
+      tl.fromTo("#disclaimer", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 3.35);
+
+      // --- hold, then crossfade comparison -> CTA ---
+      tl.to("#comparison-content", { autoAlpha: 0, y: -36, duration: 0.7, ease: "power2.in" }, 24.5);
+      tl.fromTo("#cta-card", { autoAlpha: 0, scale: 0.95 }, { autoAlpha: 1, scale: 1, duration: 0.8 }, 25.0);
+      tl.fromTo("#cta-headline", { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 0.55 }, 25.25);
+      tl.fromTo(
+        "#cta-url",
+        { autoAlpha: 0, scale: 0.7 },
+        { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(1.5)" },
+        25.65
+      );
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
