@@ -83,20 +83,8 @@
         position: absolute;
         background: var(--fg-dim);
       }
-      .reg-mark::before {
-        left: 50%;
-        top: 0;
-        width: 1.5px;
-        height: 100%;
-        transform: translateX(-50%);
-      }
-      .reg-mark::after {
-        top: 50%;
-        left: 0;
-        height: 1.5px;
-        width: 100%;
-        transform: translateY(-50%);
-      }
+      .reg-mark::before { left: 50%; top: 0; width: 1.5px; height: 100%; transform: translateX(-50%); }
+      .reg-mark::after { top: 50%; left: 0; height: 1.5px; width: 100%; transform: translateY(-50%); }
       .reg-tl { top: 44px; left: 44px; }
       .reg-tr { top: 44px; right: 44px; }
       .reg-bl { bottom: 44px; left: 44px; }
@@ -113,61 +101,69 @@
         text-transform: uppercase;
       }
 
-      /* ---------- comparison scene ---------- */
-      #comparison-content {
+      /* ---------- intro scene ---------- */
+      #intro-scene {
         position: absolute;
         inset: 0;
         display: flex;
         flex-direction: column;
-        padding: 96px 72px 90px;
-      }
-
-      .eyebrow {
-        display: flex;
         align-items: center;
-        gap: 10px;
-        font-family: var(--mono);
-        font-size: 20px;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--fg-dim);
+        justify-content: center;
+        text-align: center;
+        padding: 0 100px;
       }
-      .eyebrow .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--teal);
-        box-shadow: 0 0 10px 2px rgba(20, 184, 166, 0.6);
-      }
-
-      #title {
-        margin-top: 22px;
+      .intro-brand { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+      .intro-brand img { width: 128px; height: 128px; border-radius: 28px; }
+      .intro-brand span {
         font-weight: 900;
-        font-size: 66px;
-        line-height: 1.08;
+        font-size: 68px;
+        color: var(--teal);
         letter-spacing: -0.02em;
-        color: var(--fg);
       }
-      #title .t-sur { color: var(--teal); }
-      #title .t-vs {
+      #intro-vs {
+        margin: 30px 0;
         font-family: var(--mono);
-        font-weight: 400;
-        font-size: 32px;
+        font-size: 26px;
+        letter-spacing: 0.15em;
         color: var(--fg-faint);
-        margin: 0 6px;
+        text-transform: uppercase;
+      }
+      #intro-eleven-badge {
+        background: #f5f6f7;
+        border-radius: 20px;
+        padding: 26px 40px;
+        box-shadow: 0 0 30px 2px rgba(245, 246, 247, 0.12);
+      }
+      #intro-eleven-logo {
+        display: block;
+        width: 380px;
+        height: auto;
+      }
+      #intro-subtitle {
+        margin-top: 46px;
+        max-width: 780px;
+        font-size: 32px;
+        line-height: 1.4;
+        color: var(--fg-dim);
+        font-weight: 500;
       }
 
-      .col-headers {
-        margin-top: 40px;
+      /* ---------- compare scene ---------- */
+      #compare-scene {
+        position: absolute;
+        inset: 0;
         display: flex;
-        align-items: baseline;
+        flex-direction: column;
+        padding: 84px 72px 70px;
       }
+
+      .col-headers { display: flex; align-items: baseline; }
       .col-headers > div { flex: 1; }
       #col-sur {
         text-align: right;
         padding-right: 30px;
         font-weight: 900;
-        font-size: 36px;
+        font-size: 34px;
         letter-spacing: -0.01em;
         color: var(--teal);
       }
@@ -175,14 +171,14 @@
         text-align: left;
         padding-left: 30px;
         font-weight: 700;
-        font-size: 30px;
+        font-size: 28px;
         color: var(--fg-dim);
       }
 
       #divider-center {
         position: relative;
-        margin-top: 26px;
-        height: 1240px;
+        margin-top: 22px;
+        height: 1560px;
         display: flex;
         justify-content: center;
       }
@@ -195,17 +191,16 @@
 
       .rows-wrap {
         position: absolute;
-        top: 500px;
+        top: 190px;
         left: 72px;
         right: 72px;
-        bottom: 90px;
+        bottom: 70px;
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
       }
 
       .feature-row {
-        padding-bottom: 20px;
+        padding: 20px 0;
         border-bottom: 1px solid var(--divider);
       }
       .feature-row:last-child { border-bottom: none; }
@@ -217,14 +212,11 @@
         letter-spacing: 0.09em;
         text-transform: uppercase;
         color: var(--fg-faint);
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
 
-      .row-values {
-        display: flex;
-        align-items: flex-start;
-      }
-      .row-values > div { flex: 1; }
+      .row-values { display: flex; align-items: flex-start; }
+      .row-values > div { flex: 1; min-width: 0; }
 
       .val-sur {
         display: flex;
@@ -234,7 +226,7 @@
         padding-right: 30px;
         text-align: right;
         font-weight: 700;
-        font-size: 27px;
+        font-size: 26px;
         line-height: 1.28;
         color: var(--fg);
       }
@@ -242,15 +234,23 @@
         padding-left: 30px;
         text-align: left;
         font-weight: 400;
-        font-size: 25px;
+        font-size: 24px;
         line-height: 1.28;
         color: var(--fg-dim);
+      }
+      .sub-line {
+        margin-top: 8px;
+        text-align: right;
+        padding-right: 30px;
+        font-family: var(--mono);
+        font-size: 16px;
+        color: var(--fg-faint);
       }
 
       .check-badge {
         flex-shrink: 0;
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         background: var(--teal);
         display: flex;
@@ -258,7 +258,7 @@
         justify-content: center;
         box-shadow: 0 0 14px 1px rgba(20, 184, 166, 0.45);
       }
-      .check-badge svg { width: 16px; height: 16px; }
+      .check-badge svg { width: 15px; height: 15px; }
 
       .disclaimer {
         margin-top: 14px;
@@ -269,6 +269,28 @@
         color: var(--fg-faint);
       }
       .disclaimer .d-dot { color: var(--teal); margin-right: 6px; }
+
+      /* row 1: screenshot frame */
+      .screenshot-frame {
+        position: relative;
+        margin: 16px auto 6px;
+        width: 300px;
+        height: 573px;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 3px solid rgba(20, 184, 166, 0.35);
+        box-shadow: 0 0 34px 2px rgba(20, 184, 166, 0.18);
+        background: #050507;
+      }
+      .screenshot-frame img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+      }
+      #screenshot-after { opacity: 0; }
 
       /* ---------- CTA scene ---------- */
       #cta-card {
@@ -301,7 +323,6 @@
         color: var(--fg);
       }
       #cta-headline .h-sur { color: var(--teal); }
-
       #cta-url {
         position: relative;
         margin-top: 52px;
@@ -327,7 +348,7 @@
       id="root"
       data-composition-id="main"
       data-start="0"
-      data-duration="30"
+      data-duration="32.85"
       data-width="1080"
       data-height="1920"
       data-fps="30"
@@ -343,13 +364,19 @@
         <div class="corner-tag">jugaadai.in</div>
       </div>
 
-      <div id="comparison-content">
-        <div class="eyebrow" id="eyebrow"><span class="dot"></span>AI Voice Platforms Compared</div>
-
-        <div id="title">
-          <span class="t-sur">Sur</span><span class="t-vs">vs</span>ElevenLabs
+      <!-- ================= INTRO (0 - 3.85s) ================= -->
+      <div id="intro-scene">
+        <div class="intro-brand" id="intro-sur">
+          <img src="assets/img/sur-logo.png" alt="Sur" />
+          <span>Sur</span>
         </div>
+        <div id="intro-vs">vs</div>
+        <div id="intro-eleven-badge"><img id="intro-eleven-logo" src="assets/img/elevenlabs-logo.png" alt="ElevenLabs" /></div>
+        <div id="intro-subtitle">Using ElevenLabs for voiceovers? Listen to this.</div>
+      </div>
 
+      <!-- ================= COMPARE (3.75 - 30.85s) ================= -->
+      <div id="compare-scene">
         <div class="col-headers">
           <div id="col-sur">SUR</div>
           <div id="col-eleven">ELEVENLABS</div>
@@ -358,134 +385,150 @@
         <div id="divider-center"><div class="line"></div></div>
 
         <div class="rows-wrap">
+          <!-- Row 1: Free Usage (+ screenshots) -->
           <div class="feature-row" id="row1">
-            <div class="row-label">Voice Cloning</div>
-            <div class="row-values">
-              <div class="val-sur">Free<span class="check-badge" id="check1"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-              <div class="val-eleven">Paid plans only</div>
+            <div class="row-label">Free Usage</div>
+            <div class="row-values" data-layout-allow-overflow="true">
+              <div class="val-sur" id="val-sur-free">5,000 / day, free<span class="check-badge" id="check-free"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven" id="val-eleven-free">10,000 characters / month</div>
+            </div>
+            <div class="sub-line" id="sub-login">+12,000 more after login</div>
+            <div class="screenshot-frame">
+              <img id="screenshot-before" src="assets/img/screenshot-before-login.png" alt="Sur before login" />
+              <img id="screenshot-after" src="assets/img/screenshot-after-login.png" alt="Sur after login" />
             </div>
           </div>
 
+          <!-- Row 2: Voice Cloning -->
           <div class="feature-row" id="row2">
-            <div class="row-label">Pricing Model</div>
-            <div class="row-values">
-              <div class="val-sur">One-time from &#8377;49<span class="check-badge" id="check2"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-              <div class="val-eleven">Monthly subscription</div>
+            <div class="row-label">Voice Cloning</div>
+            <div class="row-values" data-layout-allow-overflow="true">
+              <div class="val-sur" id="val-sur-clone">Completely free<span class="check-badge" id="check-clone"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven" id="val-eleven-clone">Paid</div>
+            </div>
+            <div class="sub-line" id="sub-clone">No login needed — 5,000 chars/day</div>
+          </div>
+
+          <!-- Row 3: Pricing (Sur revealed first) -->
+          <div class="feature-row" id="row3">
+            <div class="row-label">Pricing</div>
+            <div class="row-values" data-layout-allow-overflow="true">
+              <div class="val-sur" id="val-sur-price">&#8377;49 for 25,000 characters<span class="check-badge" id="check-price"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven" id="val-eleven-price">&#8377;500/month for only 30,000 characters</div>
             </div>
             <div class="disclaimer" id="disclaimer"><span class="d-dot">&#9679;</span>Current pricing — check jugaadai.in</div>
           </div>
 
-          <div class="feature-row" id="row3">
-            <div class="row-label">Start Without Signup</div>
-            <div class="row-values">
-              <div class="val-sur">Yes (just watch an ad)<span class="check-badge" id="check3"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-              <div class="val-eleven">Account required</div>
-            </div>
-          </div>
-
+          <!-- Row 4: Indian Languages -->
           <div class="feature-row" id="row4">
             <div class="row-label">Indian Languages</div>
-            <div class="row-values">
-              <div class="val-sur">10+ (Hindi, Tamil, Telugu, Bengali &amp; more)<span class="check-badge" id="check4"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-              <div class="val-eleven">Limited</div>
-            </div>
-          </div>
-
-          <div class="feature-row" id="row5">
-            <div class="row-label">Preview Before You Spend</div>
-            <div class="row-values">
-              <div class="val-sur">Free preview<span class="check-badge" id="check5"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-              <div class="val-eleven">Not free</div>
-            </div>
-          </div>
-
-          <div class="feature-row" id="row6">
-            <div class="row-label">Voice Library</div>
-            <div class="row-values">
-              <div class="val-sur">2M+ community voices + clone your own<span class="check-badge" id="check6"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-              <div class="val-eleven">Curated roster</div>
+            <div class="row-values" data-layout-allow-overflow="true">
+              <div class="val-sur" id="val-sur-lang">80+ langs — free Hindi<span class="check-badge" id="check-lang"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#062420" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              <div class="val-eleven" id="val-eleven-lang">Limited</div>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- ================= CTA (30.85 - 32.85s) ================= -->
       <div id="cta-card">
         <div class="cta-glow"></div>
         <div id="cta-headline">Try <span class="h-sur">Sur</span> — Free, No Signup</div>
         <div id="cta-url"><span>jugaadai.in</span></div>
       </div>
+
+      <!-- ================= AUDIO ================= -->
+      <audio id="audio-voice" src="assets/audio/voiceover.mp3" data-start="0" data-duration="32.81" data-track-index="20" data-volume="1"></audio>
+      <audio id="audio-bgm" src="assets/audio/bgm.mp3" data-start="0" data-duration="32.85" data-track-index="21" data-volume="0.8"></audio>
+
+      <audio id="woosh1" src="assets/audio/woosh.mp3" data-start="3.75" data-duration="0.6" data-track-index="22" data-volume="0.4"></audio>
+      <audio id="woosh2" src="assets/audio/woosh.mp3" data-start="11.5" data-duration="0.6" data-track-index="23" data-volume="0.4"></audio>
+      <audio id="woosh3" src="assets/audio/woosh.mp3" data-start="19.9" data-duration="0.6" data-track-index="24" data-volume="0.4"></audio>
+      <audio id="woosh4" src="assets/audio/woosh.mp3" data-start="27.95" data-duration="0.6" data-track-index="25" data-volume="0.4"></audio>
+      <audio id="woosh5" src="assets/audio/woosh.mp3" data-start="30.85" data-duration="0.6" data-track-index="26" data-volume="0.4"></audio>
+
+      <audio id="pop-free" src="assets/audio/pop.mp3" data-start="6.05" data-duration="0.6" data-track-index="27" data-volume="0.55"></audio>
+      <audio id="pop-swap" src="assets/audio/pop.mp3" data-start="9.6" data-duration="0.6" data-track-index="28" data-volume="0.4"></audio>
+      <audio id="pop-clone" src="assets/audio/pop.mp3" data-start="14.9" data-duration="0.6" data-track-index="29" data-volume="0.55"></audio>
+      <audio id="pop-price" src="assets/audio/pop.mp3" data-start="20.3" data-duration="0.6" data-track-index="30" data-volume="0.55"></audio>
+      <audio id="pop-lang" src="assets/audio/pop.mp3" data-start="28.7" data-duration="0.6" data-track-index="31" data-volume="0.55"></audio>
+      <audio id="pop-cta" src="assets/audio/pop.mp3" data-start="32.15" data-duration="0.6" data-track-index="32" data-volume="0.55"></audio>
     </div>
 
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
 
-      // seek-safe reveal for everything that starts hidden
+      // ---- seek-safe initial hidden states ----
       gsap.set(
         [
-          "#eyebrow", "#title", "#col-sur", "#col-eleven", "#divider-center .line",
-          "#row1", "#row2", "#row3", "#row4", "#row5", "#row6",
-          "#check1", "#check2", "#check3", "#check4", "#check5", "#check6",
-          "#disclaimer",
+          "#compare-scene", "#col-sur", "#col-eleven",
+          "#val-sur-free", "#val-eleven-free", "#sub-login",
+          "#val-sur-clone", "#val-eleven-clone", "#sub-clone",
+          "#val-sur-price", "#val-eleven-price", "#disclaimer",
+          "#val-sur-lang", "#val-eleven-lang",
+          "#cta-card", "#cta-headline",
         ],
         { autoAlpha: 0 }
       );
       gsap.set("#divider-center .line", { scaleY: 0 });
-      gsap.set(["#check1", "#check2", "#check3", "#check4", "#check5", "#check6"], { scale: 0 });
-      gsap.set("#cta-card", { autoAlpha: 0 });
-      gsap.set("#cta-headline", { autoAlpha: 0 });
+      gsap.set(["#check-free", "#check-clone", "#check-price", "#check-lang"], { scale: 0, autoAlpha: 0 });
       gsap.set("#cta-url", { autoAlpha: 0, scale: 0 });
+      gsap.set("#screenshot-after", { autoAlpha: 0 });
 
-      // ambient background — slow breathing glows, deterministic under seek (finite repeat covers full 30s duration)
-      const TOTAL_DURATION = 30;
-      gsap.to("#glow-teal", {
-        scale: 1.08, x: 20, duration: 4.5, ease: "sine.inOut", yoyo: true,
-        repeat: Math.floor(TOTAL_DURATION / 4.5) - 1,
-      });
-      gsap.to("#glow-grey", {
-        scale: 1.1, y: -16, duration: 5.2, ease: "sine.inOut", yoyo: true,
-        repeat: Math.floor(TOTAL_DURATION / 5.2) - 1,
-      });
+      // ---- ambient background — slow breathing glows ----
+      const TOTAL_DURATION = 32.85;
+      gsap.to("#glow-teal", { scale: 1.08, x: 20, duration: 4.5, ease: "sine.inOut", yoyo: true, repeat: Math.floor(TOTAL_DURATION / 4.5) - 1 });
+      gsap.to("#glow-grey", { scale: 1.1, y: -16, duration: 5.2, ease: "sine.inOut", yoyo: true, repeat: Math.floor(TOTAL_DURATION / 5.2) - 1 });
 
-      // --- header block ---
-      tl.fromTo("#eyebrow", { autoAlpha: 0, x: -18 }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.15);
-      tl.fromTo("#title", { autoAlpha: 0, y: 26, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6 }, 0.3);
-      tl.fromTo("#col-sur", { autoAlpha: 0, x: -30 }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.62);
-      tl.fromTo("#col-eleven", { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.72);
-      tl.fromTo("#divider-center .line", { autoAlpha: 0, scaleY: 0 }, { autoAlpha: 1, scaleY: 1, duration: 0.7, ease: "power2.inOut" }, 0.85);
+      // ================= INTRO =================
+      tl.fromTo("#intro-sur", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.55 }, 0.15);
+      tl.fromTo("#intro-vs", { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.4)" }, 0.55);
+      tl.fromTo("#intro-eleven-badge", { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.55 }, 0.85);
+      tl.fromTo("#intro-subtitle", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.5 }, 1.5);
+      tl.to("#intro-scene", { autoAlpha: 0, y: -30, duration: 0.5, ease: "power2.in" }, 3.3);
 
-      // --- feature rows: slide up + fade, one after another, checkmark scale-pops after each lands ---
-      const rows = [
-        { row: "#row1", check: "#check1", start: 1.15 },
-        { row: "#row2", check: "#check2", start: 2.55 },
-        { row: "#row3", check: "#check3", start: 3.95 },
-        { row: "#row4", check: "#check4", start: 5.35 },
-        { row: "#row5", check: "#check5", start: 6.75 },
-        { row: "#row6", check: "#check6", start: 8.15 },
-      ];
-      rows.forEach(({ row, check, start }) => {
-        tl.fromTo(row, { autoAlpha: 0, y: 38 }, { autoAlpha: 1, y: 0, duration: 0.55 }, start);
-        tl.fromTo(
-          check,
-          { autoAlpha: 0, scale: 0 },
-          { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" },
-          start + 0.42
-        );
-      });
+      // ================= COMPARE SHELL =================
+      tl.fromTo("#compare-scene", { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.55 }, 3.75);
+      tl.fromTo("#col-sur", { autoAlpha: 0, x: -24 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 3.85);
+      tl.fromTo("#col-eleven", { autoAlpha: 0, x: 24 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 3.95);
+      tl.fromTo("#divider-center .line", { autoAlpha: 0, scaleY: 0 }, { autoAlpha: 1, scaleY: 1, duration: 0.6, ease: "power2.inOut" }, 4.05);
 
-      // disclaimer, near the pricing row (row2 lands ~3.1s)
-      tl.fromTo("#disclaimer", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 3.35);
+      // ================= ROW 1: FREE USAGE + SCREENSHOTS =================
+      tl.fromTo("#row1 .row-label", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 4.0);
+      tl.fromTo("#screenshot-before", { autoAlpha: 0, scale: 0.94 }, { autoAlpha: 1, scale: 1, duration: 0.5 }, 4.15);
+      tl.fromTo("#val-eleven-free", { autoAlpha: 0, x: 10 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 4.35);
+      tl.fromTo("#val-sur-free", { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 6.05);
+      tl.fromTo("#check-free", { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, 6.15);
+      tl.fromTo("#sub-login", { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 9.6);
+      tl.to("#screenshot-before", { autoAlpha: 0, duration: 0.4 }, 9.6);
+      tl.fromTo("#screenshot-after", { autoAlpha: 0, scale: 0.96 }, { autoAlpha: 1, scale: 1, duration: 0.5 }, 9.7);
 
-      // --- hold, then crossfade comparison -> CTA ---
-      tl.to("#comparison-content", { autoAlpha: 0, y: -36, duration: 0.7, ease: "power2.in" }, 24.5);
-      tl.fromTo("#cta-card", { autoAlpha: 0, scale: 0.95 }, { autoAlpha: 1, scale: 1, duration: 0.8 }, 25.0);
-      tl.fromTo("#cta-headline", { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 0.55 }, 25.25);
-      tl.fromTo(
-        "#cta-url",
-        { autoAlpha: 0, scale: 0.7 },
-        { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(1.5)" },
-        25.65
-      );
+      // ================= ROW 2: VOICE CLONING =================
+      tl.fromTo("#row2 .row-label", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 11.5);
+      tl.fromTo("#val-eleven-clone", { autoAlpha: 0, x: 10 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 12.6);
+      tl.fromTo("#val-sur-clone", { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 14.9);
+      tl.fromTo("#check-clone", { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, 15.0);
+      tl.fromTo("#sub-clone", { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 15.5);
+
+      // ================= ROW 3: PRICING (Sur first, then ElevenLabs) =================
+      tl.fromTo("#row3 .row-label", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 19.9);
+      tl.fromTo("#val-sur-price", { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 20.3);
+      tl.fromTo("#check-price", { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, 20.4);
+      tl.fromTo("#val-eleven-price", { autoAlpha: 0, x: 10 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 22.7);
+      tl.fromTo("#disclaimer", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 26.0);
+
+      // ================= ROW 4: INDIAN LANGUAGES =================
+      tl.fromTo("#row4 .row-label", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 27.95);
+      tl.fromTo("#val-eleven-lang", { autoAlpha: 0, x: 10 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 28.3);
+      tl.fromTo("#val-sur-lang", { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.45 }, 28.7);
+      tl.fromTo("#check-lang", { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, 28.8);
+
+      // ================= CROSSFADE TO CTA =================
+      tl.to("#compare-scene", { autoAlpha: 0, y: -30, duration: 0.5, ease: "power2.in" }, 30.5);
+      tl.fromTo("#cta-card", { autoAlpha: 0, scale: 0.95 }, { autoAlpha: 1, scale: 1, duration: 0.6 }, 30.85);
+      tl.fromTo("#cta-headline", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5 }, 31.0);
+      tl.fromTo("#cta-url", { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, 32.15);
 
       window.__timelines["main"] = tl;
     </script>
