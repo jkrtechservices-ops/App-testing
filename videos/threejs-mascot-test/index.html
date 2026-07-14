@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+      body {
+        background: radial-gradient(ellipse 110% 80% at 50% 38%, #fdeef6 0%, #f3e6fb 46%, #e7d9f6 100%);
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+      }
+      #three-layer {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1080"
+      data-height="1920"
+      data-fps="30"
+      data-no-timeline
+    >
+      <canvas id="three-layer"></canvas>
+    </div>
+
+    <script type="module">
+      import * as THREE from "./vendor/three.module.min.js";
+
+      const W = 1080;
+      const H = 1920;
+
+      const canvas = document.getElementById("three-layer");
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(W, H, false);
+      renderer.setPixelRatio(1);
+      renderer.setClearColor(0x000000, 0);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
+
+      // ---------- soft studio lighting ----------
+      scene.add(new THREE.HemisphereLight(0xf6ecff, 0xffe4cf, 1.15));
+      scene.add(new THREE.AmbientLight(0xffffff, 0.28));
+      const key = new THREE.DirectionalLight(0xffffff, 1.5);
+      key.position.set(3, 5.5, 4.5);
+      scene.add(key);
+      const fill = new THREE.DirectionalLight(0xffe3ef, 0.55);
+      fill.position.set(-4.5, 2.2, -2.5);
+      scene.add(fill);
+      const rim = new THREE.DirectionalLight(0xd9ecff, 0.5);
+      rim.position.set(0, 3, -5);
+      scene.add(rim);
+
+      // ---------- palette ----------
+      const MINT = 0x8fe3c4;
+      const MINT_DEEP = 0x6bc9a8;
+      const WHITE = 0xffffff;
+      const INK = 0x2e2b3a;
+      const BLUSH = 0xffb4c6;
+
+      const flat = (color, extra) => new THREE.MeshStandardMaterial({ color, flatShading: true, roughness: 0.55, metalness: 0.02, ...extra });
+
+      // ---------- character ----------
+      const character = new THREE.Group();
+      scene.add(character);
+
+      // body (egg-shaped low-poly blob)
+      const body = new THREE.Mesh(new THREE.IcosahedronGeometry(0.85, 1), flat(MINT));
+      body.scale.set(1, 1.18, 1);
+      body.position.set(0, 0.95, 0);
+      character.add(body);
+
+      // head
+      const head = new THREE.Mesh(new THREE.IcosahedronGeometry(0.6, 1), flat(MINT));
+      head.position.set(0, 2.0, 0);
+      character.add(head);
+
+      // eyes (big + friendly)
+      function makeEye(x) {
+        const eye = new THREE.Group();
+        const white = new THREE.Mesh(new THREE.IcosahedronGeometry(0.155, 1), flat(WHITE, { roughness: 0.3 }));
+        const pupil = new THREE.Mesh(new THREE.IcosahedronGeometry(0.078, 0), flat(INK, { roughness: 0.4 }));
+        pupil.position.set(0, -0.01, 0.11);
+        eye.add(white, pupil);
+        eye.position.set(x, 2.04, 0.5);
+        return eye;
+      }
+      character.add(makeEye(-0.235), makeEye(0.235));
+
+      // cheeks (cute blush) — small squashed spheres so they read from any orbit angle
+      function makeCheek(x) {
+        const cheek = new THREE.Mesh(
+          new THREE.IcosahedronGeometry(0.1, 1),
+          new THREE.MeshStandardMaterial({ color: BLUSH, flatShading: true, roughness: 0.7, transparent: true, opacity: 0.8 })
+        );
+        cheek.position.set(x, 1.82, 0.46);
+        return cheek;
+      }
+      character.add(makeCheek(-0.36), makeCheek(0.36));
+
+      // arms — shoulder pivots so rotation swings naturally from the joint
+      function makeArm() {
+        const pivot = new THREE.Group();
+        const upperLen = 0.58;
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.1, upperLen, 6), flat(MINT_DEEP));
+        arm.position.set(0, -upperLen / 2, 0);
+        const hand = new THREE.Mesh(new THREE.IcosahedronGeometry(0.135, 0), flat(MINT_DEEP));
+        hand.position.set(0, -upperLen, 0);
+        pivot.add(arm, hand);
+        return pivot;
+      }
+      const armWave = makeArm();
+      armWave.position.set(0.8, 1.25, 0);
+      character.add(armWave);
+
+      const armRest = makeArm();
+      armRest.position.set(-0.8, 1.25, 0);
+      armRest.rotation.z = 0.32;
+      character.add(armRest);
+
+      // legs
+      function makeLeg(x) {
+        const leg = new THREE.Group();
+        const upperLen = 0.5;
+        const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.13, upperLen, 6), flat(MINT_DEEP));
+        shin.position.set(0, -upperLen / 2, 0);
+        const foot = new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), flat(MINT_DEEP));
+        foot.position.set(0, -upperLen, 0.06);
+        leg.add(shin, foot);
+        leg.position.set(x, 0.18, 0);
+        return leg;
+      }
+      character.add(makeLeg(-0.33), makeLeg(0.33));
+
+      // soft contact shadow
+      const shadow = new THREE.Mesh(
+        new THREE.CircleGeometry(0.85, 28),
+        new THREE.MeshBasicMaterial({ color: 0x2a1f3a, transparent: true, opacity: 0.22 })
+      );
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.y = -0.32;
+      scene.add(shadow);
+
+      // ---------- deterministic render from HyperFrames time ----------
+      const CAM_DIST = 6.9;
+      const CAM_HEIGHT = 1.55;
+      const CAM_ORBIT_SPEED = 0.24; // slow orbit
+      const LOOK_AT = new THREE.Vector3(0, 1.35, 0);
+
+      const BOUNCE_FREQ = 2.15;
+      const BOUNCE_AMP = 0.085;
+      const WAVE_BASE = 2.55;
+      const WAVE_AMP = 0.28;
+      const WAVE_FREQ = 7.2;
+
+      function renderAt(time) {
+        const angle = time * CAM_ORBIT_SPEED;
+        camera.position.set(Math.sin(angle) * CAM_DIST, CAM_HEIGHT, Math.cos(angle) * CAM_DIST);
+        camera.lookAt(LOOK_AT);
+
+        const bouncePhase = Math.sin(time * BOUNCE_FREQ);
+        const bounceNorm = (bouncePhase + 1) / 2; // 0..1
+        character.position.y = bouncePhase * BOUNCE_AMP;
+        character.scale.set(1 - bouncePhase * 0.02, 1 + bouncePhase * 0.035, 1 - bouncePhase * 0.02);
+
+        shadow.scale.setScalar(1 - bounceNorm * 0.14);
+        shadow.material.opacity = 0.24 - bounceNorm * 0.09;
+
+        armWave.rotation.z = WAVE_BASE + Math.sin(time * WAVE_FREQ) * (WAVE_AMP * Math.min(1, time * 1.6));
+
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener("hf-seek", (event) => {
+        renderAt(event.detail.time);
+      });
+
+      renderAt(window.__hfThreeTime || 0);
+    </script>
+  </body>
+</html>
