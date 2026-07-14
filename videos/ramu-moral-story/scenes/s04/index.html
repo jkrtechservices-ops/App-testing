@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; }
+      body { background: radial-gradient(ellipse 120% 90% at 50% 30%, #fdeccb 0%, #edcd9c 55%, #d3ad79 100%); }
+      #root { position: relative; width: 1920px; height: 1080px; }
+      #three-layer { width: 100%; height: 100%; display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="10.89" data-width="1920" data-height="1080" data-fps="30" data-no-timeline>
+      <canvas id="three-layer"></canvas>
+    </div>
+    <script type="module">
+      import * as THREE from "./three.module.min.js";
+      import * as L from "./lib.js";
+      try {
+        const W = 1920, H = 1080;
+        const canvas = document.getElementById("three-layer");
+        const renderer = L.setupRenderer(canvas, W, H);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
+
+        L.setupLighting(scene, "dry");
+        scene.add(L.makeGround({ color: L.COLORS.groundCrack }));
+
+        const ramu = L.makePerson({ skin: L.COLORS.skinRamu, shirt: L.COLORS.shirtRamuAlt, pants: L.COLORS.pantsRamu });
+        ramu.position.set(-0.55, 0, 0.3);
+        ramu.rotation.y = 0.5;
+        scene.add(ramu);
+
+        // spade prop attached near Ramu's right hand
+        const spade = new THREE.Group();
+        const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.85, 5), L.flat(L.COLORS.wood));
+        handle.position.y = 0.42;
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.28, 0.03), L.flat(0x8b8f92));
+        blade.position.y = -0.02;
+        spade.add(handle, blade);
+        spade.position.set(0, -0.03, 0.06);
+        spade.rotation.z = -0.25;
+        ramu.userData.armR.userData.hand.add(spade);
+
+        // chest, buried at first, rises into view as the spade strikes
+        const chest = L.makeChest([0.55, -0.42, 0.55]);
+        scene.add(chest);
+
+        // a small dirt-mound ring around the dig site
+        const mound = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.09, 6, 12), L.flat(L.COLORS.groundCrack));
+        mound.rotation.x = Math.PI / 2;
+        mound.position.set(0.55, 0.02, 0.55);
+        scene.add(mound);
+
+        function renderAt(time) {
+          const t = time / 10.89;
+          camera.position.set(-0.5 + t * 0.4, 1.75 - t * 0.15, 4.4 - t * 0.7);
+          camera.lookAt(0.25, 0.95, 0.4);
+
+          // digging strokes: arm raises and strikes down repeatedly, easing to a big final heave
+          const strike = Math.sin(time * 3.6);
+          ramu.userData.armR.rotation.x = -1.1 + Math.max(0, -strike) * 1.6;
+          ramu.rotation.x = Math.max(0, -strike) * 0.22;
+          L.armSwing(ramu.userData.armL, time, { base: 0.2, amp: 0.08, freq: 3.6 });
+
+          // chest slowly unearths, with a final pop into full view near the end
+          const rise = time < 8.5 ? (time / 8.5) * 0.28 : 0.28 + Math.min(1, (time - 8.5) / 1.6) * 0.14;
+          chest.position.y = -0.42 + rise;
+
+          renderer.render(scene, camera);
+        }
+        window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+        renderAt(window.__hfThreeTime || 0);
+      } catch (err) {
+        const d = document.createElement("div");
+        d.style.cssText = "position:absolute;inset:0;background:#fff;color:#c00;font:22px monospace;padding:20px;white-space:pre-wrap;z-index:999;";
+        d.textContent = "ERROR: " + err.message + "\n" + (err.stack || "");
+        document.body.appendChild(d);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; }
+      body { background: radial-gradient(ellipse 120% 90% at 50% 28%, #fdead0 0%, #eeceA0 55%, #cfa876 100%); }
+      #root { position: relative; width: 1920px; height: 1080px; }
+      #three-layer { width: 100%; height: 100%; display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="28.23" data-width="1920" data-height="1080" data-fps="30" data-no-timeline>
+      <canvas id="three-layer"></canvas>
+    </div>
+    <script type="module">
+      import * as THREE from "./three.module.min.js";
+      import * as L from "./lib.js";
+      try {
+        const W = 1920, H = 1080;
+        const canvas = document.getElementById("three-layer");
+        const renderer = L.setupRenderer(canvas, W, H);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
+
+        L.setupLighting(scene, "dry");
+        scene.add(L.makeGround({ color: L.COLORS.groundCrack }));
+        scene.add(L.makeSun([4, 4.6, -6], 0xffdca0));
+
+        // cracked-field lines (thin dark bars scattered on the ground)
+        const crackMat = L.flat(0x5f4527);
+        for (let i = 0; i < 14; i++) {
+          const len = 0.7 + (i % 4) * 0.35;
+          const crack = new THREE.Mesh(new THREE.BoxGeometry(len, 0.02, 0.05), crackMat);
+          const ang = (i * 47) % 360 * (Math.PI / 180);
+          crack.rotation.y = ang;
+          crack.position.set(((i * 37) % 13) - 6.5, 0.011, ((i * 23) % 9) - 3);
+          scene.add(crack);
+        }
+
+        // a few wilted stalks instead of a full crop row
+        const wiltMat = L.flat(0x9c7a48);
+        for (let i = 0; i < 6; i++) {
+          const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.03, 0.22, 5), wiltMat);
+          stalk.position.set(-3 + i * 0.4, 0.11, 1.8);
+          stalk.rotation.z = 0.5;
+          scene.add(stalk);
+        }
+
+        const ramu = L.makePerson({ skin: L.COLORS.skinRamu, shirt: L.COLORS.shirtRamuAlt, pants: L.COLORS.pantsRamu });
+        ramu.position.set(-0.2, 0, 1.4);
+        scene.add(ramu);
+
+        // villagers leaving toward the background
+        const v1 = L.makePerson({ skin: L.COLORS.skinElder, shirt: 0x8a7358, pants: 0x5c4e3a, scale: 0.95 });
+        const v2 = L.makePerson({ skin: L.COLORS.skinSita, shirt: 0x7d6a4a, pants: 0x6b5a3e, scale: 0.92 });
+        const v3 = L.makePerson({ skin: L.COLORS.skinMohan, shirt: 0x8c7550, pants: 0x5c4e3a, build: "child", scale: 0.85 });
+        [v1, v2, v3].forEach((v, i) => {
+          v.position.set(3 + i * 0.6, 0, -1 - i * 0.3);
+          v.rotation.y = 2.6;
+          scene.add(v);
+        });
+
+        function renderAt(time) {
+          const t = time / 28.23;
+          camera.position.set(-1.2 - t * 1.0, 1.9 + t * 0.5, 7.6 + t * 2.2);
+          camera.lookAt(0.3, 1.0, -0.3);
+
+          L.idleBreathe(ramu, time, { phase: 0, amp: 0.012 });
+
+          const walkT = Math.min(1, time / 24);
+          [v1, v2, v3].forEach((v, i) => {
+            L.walkCycle(v, time, { phase: i * 0.5 });
+            v.position.x = 3 + i * 0.6 + walkT * 5.5;
+            v.position.z = -1 - i * 0.3 - walkT * 2.4;
+          });
+
+          renderer.render(scene, camera);
+        }
+        window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+        renderAt(window.__hfThreeTime || 0);
+      } catch (err) {
+        const d = document.createElement("div");
+        d.style.cssText = "position:absolute;inset:0;background:#fff;color:#c00;font:22px monospace;padding:20px;white-space:pre-wrap;z-index:999;";
+        d.textContent = "ERROR: " + err.message + "\n" + (err.stack || "");
+        document.body.appendChild(d);
+      }
+    </script>
+  </body>
+</html>

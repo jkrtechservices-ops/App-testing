@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; }
+      body { background: radial-gradient(ellipse 120% 90% at 50% 32%, #fdf1ea 0%, #f6e2d6 55%, #e9cebd 100%); }
+      #root { position: relative; width: 1920px; height: 1080px; }
+      #three-layer { width: 100%; height: 100%; display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="14.98" data-width="1920" data-height="1080" data-fps="30" data-no-timeline>
+      <canvas id="three-layer"></canvas>
+    </div>
+    <script type="module">
+      import * as THREE from "./three.module.min.js";
+      import * as L from "./lib.js";
+      try {
+        const W = 1920, H = 1080;
+        const canvas = document.getElementById("three-layer");
+        const renderer = L.setupRenderer(canvas, W, H);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(26, W / H, 0.1, 100);
+
+        L.setupLighting(scene, "soft");
+        scene.add(L.makeGround({ color: L.COLORS.groundLush, size: 20 }));
+
+        const ramu = L.makePerson({ skin: L.COLORS.skinRamu, shirt: L.COLORS.shirtRamu, pants: L.COLORS.pantsRamu });
+        ramu.position.set(0, 0, 0);
+        scene.add(ramu);
+
+        // clasped hands — bring both hands together in front of the chest
+        ramu.userData.armL.rotation.set(-1.4, 0, -0.5);
+        ramu.userData.armR.rotation.set(-1.4, 0, 0.5);
+
+        // a single tear — small pale-blue drop that slides down the cheek
+        const tear = new THREE.Mesh(new THREE.IcosahedronGeometry(0.02, 0), L.flat(0xbfe0ee, { transparent: true, opacity: 0.9 }));
+        ramu.userData.head.add(tear);
+
+        function renderAt(time) {
+          const t = time / 14.98;
+          camera.position.set(-0.35 + t * 0.15, 1.72, 1.85 - t * 0.35);
+          camera.lookAt(0.05, 1.72, 0);
+
+          L.idleBreathe(ramu, time, { phase: 0, amp: 0.012, freq: 1.3 });
+          ramu.rotation.x = 0.08 + Math.sin(time * 0.5) * 0.015;
+
+          const tearT = THREE.MathUtils.clamp((time - 3) / 6, 0, 1);
+          tear.position.set(0.13, 0.02 - tearT * 0.22, 0.5);
+          tear.visible = time > 3 && time < 11.5;
+
+          renderer.render(scene, camera);
+        }
+        window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+        renderAt(window.__hfThreeTime || 0);
+      } catch (err) {
+        const d = document.createElement("div");
+        d.style.cssText = "position:absolute;inset:0;background:#fff;color:#c00;font:22px monospace;padding:20px;white-space:pre-wrap;z-index:999;";
+        d.textContent = "ERROR: " + err.message + "\n" + (err.stack || "");
+        document.body.appendChild(d);
+      }
+    </script>
+  </body>
+</html>

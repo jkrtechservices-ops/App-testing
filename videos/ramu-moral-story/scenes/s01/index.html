@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; }
+      body { background: radial-gradient(ellipse 120% 90% at 50% 34%, #fff2df 0%, #ffe0c2 50%, #f2c495 100%); }
+      #root { position: relative; width: 1920px; height: 1080px; }
+      #three-layer { width: 100%; height: 100%; display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="16.35" data-width="1920" data-height="1080" data-fps="30" data-no-timeline>
+      <canvas id="three-layer"></canvas>
+    </div>
+    <script type="module">
+      import * as THREE from "./three.module.min.js";
+      import * as L from "./lib.js";
+      try {
+        const W = 1920, H = 1080;
+        const canvas = document.getElementById("three-layer");
+        const renderer = L.setupRenderer(canvas, W, H);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
+
+        L.setupLighting(scene, "warm");
+        scene.add(L.makeGround({ color: L.COLORS.groundDry }));
+        scene.add(L.makeSun([6, 3.4, -7], 0xffdf9e));
+        scene.add(L.makeHut([-4.6, 0, -1.6]));
+        scene.add(L.makeWell([3.4, 0, -0.8]));
+        scene.add(L.makeCropRow({ position: [-1, 0, 1.6], rows: 4, perRow: 7, spacing: 0.55, lush: false }));
+        const cloud1 = L.makeCloud([-3, 3.6, -6], 1.1);
+        const cloud2 = L.makeCloud([4, 4.1, -7], 0.9, true);
+        scene.add(cloud1, cloud2);
+
+        const ramu = L.makePerson({ skin: L.COLORS.skinRamu, shirt: L.COLORS.shirtRamu, pants: L.COLORS.pantsRamu });
+        ramu.position.set(0.4, 0, 2.4);
+        ramu.rotation.y = -0.3;
+        scene.add(ramu);
+
+        function renderAt(time) {
+          const t = Math.min(1, time / 16.35);
+          camera.position.set(-1.5 + t * 3.0, 1.7 - t * 0.15, 8.4 - t * 1.6);
+          camera.lookAt(0.2, 1.05, 0.5);
+
+          L.idleBreathe(ramu, time, { phase: 0 });
+          L.bobGroup(cloud1, time, { freq: 0.25, amp: 0.08, baseY: 3.6 });
+          L.bobGroup(cloud2, time, { freq: 0.2, amp: 0.06, baseY: 4.1, phase: 1.2 });
+          cloud1.position.x = -3 + time * 0.05;
+          cloud2.position.x = 4 - time * 0.04;
+
+          renderer.render(scene, camera);
+        }
+        window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+        renderAt(window.__hfThreeTime || 0);
+      } catch (err) {
+        const d = document.createElement("div");
+        d.style.cssText = "position:absolute;inset:0;background:#fff;color:#c00;font:22px monospace;padding:20px;white-space:pre-wrap;z-index:999;";
+        d.textContent = "ERROR: " + err.message + "\n" + (err.stack || "");
+        document.body.appendChild(d);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; }
+      body { background: radial-gradient(ellipse 120% 90% at 50% 30%, #fff6df 0%, #fbe8bd 55%, #eecf90 100%); }
+      #root { position: relative; width: 1920px; height: 1080px; }
+      #three-layer { width: 100%; height: 100%; display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20.23" data-width="1920" data-height="1080" data-fps="30" data-no-timeline>
+      <canvas id="three-layer"></canvas>
+    </div>
+    <script type="module">
+      import * as THREE from "./three.module.min.js";
+      import * as L from "./lib.js";
+      try {
+        const W = 1920, H = 1080;
+        const canvas = document.getElementById("three-layer");
+        const renderer = L.setupRenderer(canvas, W, H);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+
+        L.setupLighting(scene, "golden");
+        scene.add(L.makeGround({ color: L.COLORS.groundLush }));
+        scene.add(L.makeSun([5, 5, -6], 0xffe4a0));
+        scene.add(L.makeCropRow({ position: [-3.4, 0, -0.6], rows: 3, perRow: 5, spacing: 0.5, lush: true }));
+        scene.add(L.makePump([2.4, 0, 0.4]));
+
+        const ramu = L.makePerson({ skin: L.COLORS.skinRamu, shirt: L.COLORS.shirtRamu, pants: L.COLORS.pantsRamu });
+        ramu.position.set(0, 0, 1.2);
+        scene.add(ramu);
+
+        const mohan = L.makePerson({ skin: L.COLORS.skinMohan, shirt: L.COLORS.shirtMohan, pants: L.COLORS.shortsMohan, build: "child", scale: 0.78 });
+        mohan.position.set(-0.9, 0, 1.4);
+        scene.add(mohan);
+        const book = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.28, 0.04), L.flat(0xcf5b4a));
+        book.position.set(0, -0.03, 0.1);
+        book.rotation.set(0.2, 0, 0.1);
+        mohan.userData.armL.userData.hand.add(book);
+
+        // villagers gathered, listening
+        const colors = [
+          [0xcf8f6a, 0x7d6a4a], [0xdba077, 0x8a7358], [0xc98a63, 0x6b5a3e],
+        ];
+        const villagers = colors.map(([skin, shirt], i) => {
+          const v = L.makePerson({ skin, shirt, pants: 0x574a36, scale: 0.94 });
+          const ang = -0.6 + i * 0.5;
+          v.position.set(1.4 + Math.cos(ang) * 1.6, 0, 0.6 + Math.sin(ang) * 1.6);
+          v.rotation.y = -ang - Math.PI / 2;
+          scene.add(v);
+          return v;
+        });
+
+        function renderAt(time) {
+          const t = time / 20.23;
+          camera.position.set(-1.5 + t * 1.2, 1.85 - t * 0.2, 5.6 - t * 1.2);
+          camera.lookAt(0.6, 1.0, 0.8);
+
+          L.idleBreathe(ramu, time, { phase: 0 });
+          L.armSwing(ramu.userData.armR, time, { base: 0.5, amp: 0.18, freq: 1.2 });
+          L.idleBreathe(mohan, time, { phase: 0.6, freq: 2.1 });
+          villagers.forEach((v, i) => L.idleBreathe(v, time, { phase: 0.3 * i, freq: 1.7 }));
+
+          renderer.render(scene, camera);
+        }
+        window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+        renderAt(window.__hfThreeTime || 0);
+      } catch (err) {
+        const d = document.createElement("div");
+        d.style.cssText = "position:absolute;inset:0;background:#fff;color:#c00;font:22px monospace;padding:20px;white-space:pre-wrap;z-index:999;";
+        d.textContent = "ERROR: " + err.message + "\n" + (err.stack || "");
+        document.body.appendChild(d);
+      }
+    </script>
+  </body>
+</html>

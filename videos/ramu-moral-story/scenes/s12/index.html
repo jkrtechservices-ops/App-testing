@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; }
+      body { background: radial-gradient(ellipse 120% 90% at 50% 32%, #fff3da 0%, #ffe3b8 55%, #f0c68a 100%); }
+      #root { position: relative; width: 1920px; height: 1080px; }
+      #three-layer { width: 100%; height: 100%; display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="13.75" data-width="1920" data-height="1080" data-fps="30" data-no-timeline>
+      <canvas id="three-layer"></canvas>
+    </div>
+    <script type="module">
+      import * as THREE from "./three.module.min.js";
+      import * as L from "./lib.js";
+      try {
+        const W = 1920, H = 1080;
+        const canvas = document.getElementById("three-layer");
+        const renderer = L.setupRenderer(canvas, W, H);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(36, W / H, 0.1, 100);
+
+        L.setupLighting(scene, "golden");
+        scene.add(L.makeGround({ color: L.COLORS.groundLush }));
+        scene.add(L.makeSun([5, 4.6, -6], 0xffdf9e));
+        scene.add(L.makeCropRow({ position: [-3.6, 0, -0.4], rows: 3, perRow: 6, spacing: 0.5, lush: true }));
+        scene.add(L.makeCropRow({ position: [2.4, 0, -0.4], rows: 3, perRow: 6, spacing: 0.5, lush: true }));
+        scene.add(L.makeHut([-5.2, 0, -1.8]));
+
+        const ramu = L.makePerson({ skin: L.COLORS.skinRamu, shirt: L.COLORS.shirtRamu, pants: L.COLORS.pantsRamu });
+        ramu.position.set(-0.55, 0, 1.2);
+        const sita = L.makePerson({ skin: L.COLORS.skinSita, shirt: L.COLORS.sariSita, pants: L.COLORS.sariSita });
+        sita.position.set(0.55, 0, 1.2);
+        const mohan = L.makePerson({ skin: L.COLORS.skinMohan, shirt: 0x4f7fa0, pants: L.COLORS.pantsRamu });
+        mohan.position.set(1.55, 0, 1.35);
+        const elder = L.makePerson({ skin: L.COLORS.skinElder, shirt: L.COLORS.robeElder, pants: L.COLORS.robeElder, beard: true, build: "elder" });
+        elder.position.set(-1.55, 0, 1.35);
+        [ramu, sita, mohan, elder].forEach((p) => scene.add(p));
+
+        function renderAt(time) {
+          const t = time / 13.75;
+          camera.position.set(0, 1.75 + t * 0.35, 5.4 + t * 1.6);
+          camera.lookAt(0, 1.05, 0.6);
+
+          [ramu, sita, mohan, elder].forEach((p, i) => L.idleBreathe(p, time, { phase: 0.3 * i, freq: 1.5 }));
+
+          renderer.render(scene, camera);
+        }
+        window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+        renderAt(window.__hfThreeTime || 0);
+      } catch (err) {
+        const d = document.createElement("div");
+        d.style.cssText = "position:absolute;inset:0;background:#fff;color:#c00;font:22px monospace;padding:20px;white-space:pre-wrap;z-index:999;";
+        d.textContent = "ERROR: " + err.message + "\n" + (err.stack || "");
+        document.body.appendChild(d);
+      }
+    </script>
+  </body>
+</html>
